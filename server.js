@@ -15,6 +15,11 @@ var Storage = {
     this.setId += 1;
     return item;
   },
+  update: function(index, name) {
+    if (this.items[index]) {
+      this.items[index].name = name;
+    }
+  },
   remove: function(index) {
     if (this.items[index]) {
       this.items.splice(index, 1);
@@ -74,6 +79,26 @@ app.delete('/items/:id', function(request, response) {
     return response.sendStatus(404);
   } else {
     storage.remove(arrayIndex);
+    return response.sendStatus(200);
+  }
+});
+
+//PUT /items/<id>
+app.put('/items/:id', jsonParser, function(request, response) {
+  var foundItem = false;
+  var arrayIndex;
+  
+  for (var i = 0; i < storage.items.length; i++) {
+    if (Number(request.params.id) === storage.items[i].id) {
+      foundItem = true;
+      arrayIndex = i;
+    }
+  }
+  
+  if (!foundItem) {
+    return response.sendStatus(404);
+  } else {
+    storage.update(arrayIndex, request.body.name);
     return response.sendStatus(200);
   }
 });

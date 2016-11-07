@@ -190,7 +190,11 @@ ShoppingList.prototype.addItem = function(name) {
         dataType: 'json',
         contentType: 'application/json'
     });
-    ajax.done(this.getItems.bind(this));
+    ajax.done(this.getItems.bind(this)).fail(function (jqXHR, error, errorThrown) {
+        console.log(jqXHR);
+        console.log(error);
+        console.log(errorThrown);
+    });
 };
 ShoppingList.prototype.deleteItem = function(id) {
     var ajax = $.ajax('/items/' + id, {
