@@ -16,8 +16,8 @@ var Storage = {
     return item;
   },
   remove: function(index) {
-    if (index) {
-      delete this.items[index];
+    if (this.items[index]) {
+      this.items.splice(index, 1);
     }
   }
 };
@@ -73,10 +73,9 @@ app.delete('/items/:id', function(request, response) {
   if (!foundItem) {
     return response.sendStatus(404);
   } else {
-    storage.remove(i);
+    storage.remove(arrayIndex);
     return response.sendStatus(200);
   }
-  
 });
 
 // Run the local server.
