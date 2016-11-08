@@ -105,3 +105,7 @@ app.put('/items/:id', jsonParser, function(request, response) {
 
 // Run the local server.
 app.listen(process.env.PORT || process.env.IP);
+
+// Export the modules.
+exports.app = app;
+exports.storage = storage;
