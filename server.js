@@ -88,6 +88,10 @@ app.put('/items/:id', jsonParser, function(request, response) {
   var foundItem = false;
   var arrayIndex;
   
+  if (Number(request.params.id) !== Number(request.body.id)) {
+    return response.sendStatus(400);
+  }
+  
   for (var i = 0; i < storage.items.length; i++) {
     if (Number(request.params.id) === storage.items[i].id) {
       foundItem = true;
@@ -99,7 +103,7 @@ app.put('/items/:id', jsonParser, function(request, response) {
     return response.sendStatus(404);
   } else {
     storage.update(arrayIndex, request.body.name);
-    return response.sendStatus(200);
+    return response.sendStatus(201);
   }
 });
 

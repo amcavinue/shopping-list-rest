@@ -3,6 +3,8 @@ var chaiHttp = require('chai-http');
 var server = require('../server.js');
 
 var should = chai.should();
+var expect = chai.expect;
+
 var app = server.app;
 var storage = server.storage;
 
@@ -14,17 +16,109 @@ describe('Shopping List', function() {
             .get('/items')
             .end(function(err, res) {
                 res.should.have.status(200);
+                res.should.be.json;
+                res.body.should.be.a('array');
+                res.body.should.have.length(3);
+                res.body[0].should.be.a('object');
+                res.body[0].should.have.property('id');
+                res.body[0].should.have.property('name');
+                res.body[0].id.should.be.a('number');
+                res.body[0].name.should.be.a('string');
+                res.body[0].name.should.equal('Broad beans');
+                res.body[1].name.should.equal('Tomatoes');
+                res.body[2].name.should.equal('Peppers');
                 done();
             });
     });
     
-    it('should add an item on post');
-    it ('should error on post without body data');
-    it ('should should error on post with invalid json');
+    it('should add an item on post', function(done) {
+        chai.request(app)
+            .post('/items')
+            .send({'name': 'Kale'})
+            .end(function(err, res) {
+                should.equal(err, null);
+                res.should.have.status(201);
+                res.should.be.json;
+                res.body.should.be.a('object');
+                res.body.should.have.property('name');
+                res.body.should.have.property('id');
+                res.body.name.should.be.a('string');
+                res.body.id.should.be.a('number');
+                res.body.name.should.equal('Kale');
+                storage.items.should.be.a('array');
+                storage.items.should.have.length(4);
+                storage.items[3].should.be.a('object');
+                storage.items[3].should.have.property('id');
+                storage.items[3].should.have.property('name');
+                storage.items[3].id.should.be.a('number');
+                storage.items[3].name.should.be.a('string');
+                storage.items[3].name.should.equal('Kale');
+                done();
+            });
+    });
     
-    it('should edit an item on put');
-    it('should error on put without id');
-    it('should error on put with different id in endpoint and body')
+    it ('should error on post without body data', function(done) {
+        chai.request(app)
+            .post('/items')
+            .send()
+            .end(function(err, res) {
+               res.should.have.status(400);
+               done();
+            });
+    });
+    
+    it ('should error on post with invalid json', function(done) {
+        chai.request(app)
+            .post('/items')
+            .send({'abc': 123})
+            .end(function(err, res) {
+                res.should.have.status(400);
+                done();
+            });
+    });
+    
+    it('should edit an item on put', function(done) {
+        chai.request(app)
+            .put('/items/1')
+            .send({name: 'potatoes', id: 1})
+            .end(function(err, res) {
+               res.should.have.status(201); 
+            });
+        
+        // Re-test the get request to make sure the data is valid.
+        chai.request(app)
+            .get('/items')
+            .end(function(err, res) {
+                res.should.have.status(200);
+                res.should.be.json;
+                res.body.should.be.a('array');
+                res.body[0].should.be.a('object');
+                res.body[0].should.have.property('id');
+                res.body[0].should.have.property('name');
+                res.body[0].id.should.be.a('number');
+                res.body[0].name.should.be.a('string');
+                done();
+            });
+    });
+    
+    it('should error on put without id', function(done) {
+        chai.request(app)
+            .put('/items/')
+            .end(function(err, res) {
+                expect(err).to.not.be.null;
+                done();
+            });
+    });
+    
+    it('should error on put with different id in endpoint and body', function(done) {
+        chai.request(app)
+            .put('/items/2')
+            .send({name: 'potatoes', id: 1})
+            .end(function(err, res) {
+                expect(err).to.not.be.null;
+                done();
+            });
+    });
     it('should error on put with non-existant id');
     it('should error on put without body data');
     it('should error on put with invalid json');
