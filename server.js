@@ -88,7 +88,7 @@ app.put('/items/:id', jsonParser, function(request, response) {
   var foundItem = false;
   var arrayIndex;
   
-  if (Number(request.params.id) !== Number(request.body.id)) {
+  if ((Number(request.params.id) !== Number(request.body.id)) || (!request.body.name)) {
     return response.sendStatus(400);
   }
   

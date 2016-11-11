@@ -11,6 +11,9 @@ var storage = server.storage;
 chai.use(chaiHttp);
 
 describe('Shopping List', function() {
+    /**
+     * GET
+     */
     it('should list items on get', function(done) {
         chai.request(app)
             .get('/items')
@@ -31,6 +34,9 @@ describe('Shopping List', function() {
             });
     });
     
+    /**
+     * POST
+     */
     it('should add an item on post', function(done) {
         chai.request(app)
             .post('/items')
@@ -77,6 +83,9 @@ describe('Shopping List', function() {
             });
     });
     
+    /**
+     * PUT
+     */
     it('should edit an item on put', function(done) {
         chai.request(app)
             .put('/items/1')
@@ -113,17 +122,69 @@ describe('Shopping List', function() {
     it('should error on put with different id in endpoint and body', function(done) {
         chai.request(app)
             .put('/items/2')
-            .send({name: 'potatoes', id: 1})
+            .send({name: 'abc', id: 1})
             .end(function(err, res) {
                 expect(err).to.not.be.null;
                 done();
             });
     });
-    it('should error on put with non-existant id');
-    it('should error on put without body data');
-    it('should error on put with invalid json');
     
-    it('should delete an item on delete');
-    it('should error on delete an item not in the list');
-    it('should error on delete without id');
+    it('should error on put with non-existant id', function(done) {
+        chai.request(app)
+            .put('/items/5')
+            .send({name: 'abc', id: 5})
+            .end(function(err, res) {
+                expect(err).to.not.be.null;
+                done();
+            });
+    });
+    
+    it('should error on put without body data', function(done) {
+        chai.request(app)
+            .put('/items/1')
+            .send({name: undefined, id: 1})
+            .end(function(err, res) {
+               expect(err).to.not.be.null;
+               done();
+            });
+    });
+    it('should error on put with invalid json', function(done) {
+        chai.request(app)
+            .put('/items/1')
+            .send({'abc': 123})
+            .end(function(err, res) {
+               expect(err).to.not.be.null;
+               done();
+            });
+    });
+    
+    /**
+     * DELETE
+     */
+    it('should delete an item on delete', function(done) {
+        chai.request(app)
+            .delete('/items/1')
+            .end(function(err, res) {
+               res.should.have.status(200);
+               done();
+            });
+    });
+    
+    it('should error on delete an item not in the list', function(done) {
+        chai.request(app)
+            .delete('/items/5')
+            .end(function(err, res) {
+                expect(err).to.not.be.null;
+                done();
+            });
+    });
+    
+    it('should error on delete without id', function(done) {
+        chai.request(app)
+            .delete('/items/')
+            .end(function(err, res) {
+                expect(err).to.not.be.null;
+                done();
+            });
+    });
 });
