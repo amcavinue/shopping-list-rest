@@ -10,6 +10,35 @@ var storage = server.storage;
 
 chai.use(chaiHttp);
 
+/**
+ * Set mock data for the tests
+ */
+describe('Set data', function() {
+    it('should set required data', function(done) {
+        chai.request(app)
+            .post('/items')
+            .send({'name': 'abcd'})
+            .end(function(err, res) {
+                res.should.have.status(201);
+            });
+            
+        chai.request(app)
+            .post('/items')
+            .send({'name': 'efgh'})
+            .end(function(err, res) {
+                res.should.have.status(201);
+            });
+            
+        chai.request(app)
+            .post('/items')
+            .send({'name': 'ijkl'})
+            .end(function(err, res) {
+                res.should.have.status(201);
+                done();
+            });
+    });
+});
+
 describe('Shopping List', function() {
     /**
      * GET
@@ -21,7 +50,7 @@ describe('Shopping List', function() {
                 res.should.have.status(200);
                 res.should.be.json;
                 res.body.should.be.a('array');
-                res.body.should.have.length(3);
+                res.body.should.have.length(6);
                 res.body[0].should.be.a('object');
                 res.body[0].should.have.property('id');
                 res.body[0].should.have.property('name');
@@ -30,6 +59,15 @@ describe('Shopping List', function() {
                 res.body[0].name.should.equal('Broad beans');
                 res.body[1].name.should.equal('Tomatoes');
                 res.body[2].name.should.equal('Peppers');
+                done();
+            });
+    });
+    
+    it('should error on get to incorrect path', function(done) {
+        chai.request(app)
+            .get('/items/1')
+            .end(function(err, res) {
+                expect(err).to.not.be.null;
                 done();
             });
     });
@@ -52,13 +90,13 @@ describe('Shopping List', function() {
                 res.body.id.should.be.a('number');
                 res.body.name.should.equal('Kale');
                 storage.items.should.be.a('array');
-                storage.items.should.have.length(4);
-                storage.items[3].should.be.a('object');
-                storage.items[3].should.have.property('id');
-                storage.items[3].should.have.property('name');
-                storage.items[3].id.should.be.a('number');
-                storage.items[3].name.should.be.a('string');
-                storage.items[3].name.should.equal('Kale');
+                storage.items.should.have.length(7);
+                storage.items[6].should.be.a('object');
+                storage.items[6].should.have.property('id');
+                storage.items[6].should.have.property('name');
+                storage.items[6].id.should.be.a('number');
+                storage.items[6].name.should.be.a('string');
+                storage.items[6].name.should.equal('Kale');
                 done();
             });
     });
@@ -131,8 +169,8 @@ describe('Shopping List', function() {
     
     it('should error on put with non-existant id', function(done) {
         chai.request(app)
-            .put('/items/5')
-            .send({name: 'abc', id: 5})
+            .put('/items/9999')
+            .send({name: 'abc', id: 9999})
             .end(function(err, res) {
                 expect(err).to.not.be.null;
                 done();
@@ -172,7 +210,7 @@ describe('Shopping List', function() {
     
     it('should error on delete an item not in the list', function(done) {
         chai.request(app)
-            .delete('/items/5')
+            .delete('/items/9999')
             .end(function(err, res) {
                 expect(err).to.not.be.null;
                 done();
@@ -184,6 +222,32 @@ describe('Shopping List', function() {
             .delete('/items/')
             .end(function(err, res) {
                 expect(err).to.not.be.null;
+                done();
+            });
+    });
+});
+
+/**
+ * Remove mock data.
+ */
+describe('Remove data', function() {
+    it('should remove mock data', function(done) {
+        chai.request(app)
+            .delete('/items/5')
+            .end(function(err, res) {
+                res.should.have.status(200);
+            });
+            
+        chai.request(app)
+            .delete('/items/6')
+            .end(function(err, res) {
+                res.should.have.status(200);
+            });
+            
+        chai.request(app)
+            .delete('/items/7')
+            .end(function(err, res) {
+                res.should.have.status(200);
                 done();
             });
     });

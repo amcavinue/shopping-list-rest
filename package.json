@@ -18,10 +18,13 @@
   "homepage": "https://github.com/amcavinue/shopping-list-rest#readme",
   "dependencies": {
     "body-parser": "^1.15.2",
-    "express": "^4.14.0"
+    "express": "^4.14.0",
+    "jquery": "^3.1.1",
+    "jsdom": "^9.8.3"
   },
   "devDependencies": {
     "chai": "^3.5.0",
-    "chai-http": "^3.0.0"
+    "chai-http": "^3.0.0",
+    "jsdom": "^9.8.3"
   }
 }
